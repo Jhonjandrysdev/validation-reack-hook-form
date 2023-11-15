@@ -1,44 +1,54 @@
-import {useContext, useState} from 'react';
-import {userContext} from '../context/userProvider';
-import {Link, useNavigate} from 'react-router-dom';
+import { useContext } from "react";
+import { userContext } from "../context/userProvider";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import ErrorsFirebase from "../utils/ErrorsFirebase";
+import FormErrors from "../components/FormErrors";
+import { FormValidate } from "../utils/FormValidate";
 
 const Login = () => {
+  const { Login } = useContext(userContext);
+  const navigate = useNavigate();
+const {register, handleSubmit, formState: {errors}, getValues, setError} = useForm()
+const { required, EmailPattern, validateTrim } = FormValidate();
 
-    const {Login} = useContext(userContext)
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-
-    const navigate = useNavigate()
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        console.log("Ingresando Usuario");
-        try {
-           await Login(email,password)
-            navigate("/home")
-           console.log("Usuario Ingresado");
-        } catch (error) {
-            console.log(error);
-        }
+  const onSubmit = async ({ email, password }) => {
+    try {
+      await Login(email, password);
+      navigate("/home");
+    } catch (error) {
+      console.log(error.code);
+      setError("firebase", {
+        message: ErrorsFirebase(error.code),
+      });
     }
-    return(
-        <>
-        <div>
-            <Link to="/register">Registro</Link>
-            <h1>Login</h1>
-        </div>
-        <form onSubmit={handleSubmit}>
-            <input type="text" name="" id="" placeholder="Ingresa Email" 
-            value={email}
-            onChange={(e) => setEmail(e.target.value) }/>
+  };
 
-            <input type="password" name="" id=""
-            placeholder="Ingresa tu contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value) }/>
-            <button type="submit">Acceder</button>
-        </form>
-        </>
-    )
-}
-export default Login
+return (
+  <>
+    <Link to="/register">Registro</Link>
+    <h1>Login</h1>
+    <FormErrors error={errors.firebase} />
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input
+        type="text"
+        placeholder="Ingresa Email"
+        {...register("email", {
+          required,
+          pattern: EmailPattern
+        })}
+      />
+      <FormErrors error={errors.email} />
+      <input
+        type="password"
+        placeholder="Ingresa tu contraseña"
+        {...register("password", {
+          validate: validateTrim
+        })}
+      />
+      <FormErrors error={errors.password} />
+      <button type="submit">Acceder</button>
+    </form>
+  </>
+);}
+export default Login;
