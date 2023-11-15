@@ -12,7 +12,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        console.log("Ingresando Usuario usuario");
+        console.log("Ingresando Usuario");
         try {
            await Login(email,password)
             navigate("/home")
@@ -21,7 +21,6 @@ const Login = () => {
             console.log(error);
         }
     }
-
     return(
         <>
         <div>
