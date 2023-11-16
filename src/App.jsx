@@ -1,13 +1,17 @@
+import { useContext } from 'react';
 import {Routes, Route} from 'react-router-dom';
+import { userContext } from './context/userProvider';
+
 import Home from './routes/Home';
 import Login from './routes/Login';
-import Navbar from './components/Navbar';
-import RequireAuth from './components/RequireAuth';
 import Register from './routes/Register';
-import { useContext } from 'react';
-import { userContext } from './context/userProvider';
-import Layout from './components/LayoutContainer';
+import NotFound from './routes/NotFound';
 
+import Navbar from './components/Navbar';
+import Profile from './components/Profile';
+
+import Layout from './layouts/LayoutContainer';
+import LayoutRequireAuth from './layouts/LayoutRequireAuth';
 function App() {
 
   const {user} = useContext(userContext)
@@ -19,18 +23,20 @@ function App() {
 
   return (
     <>
-      <h1>App</h1>
       <Navbar/>
       <Routes>
-        <Route path='/home' element={<RequireAuth>
-          <Home/>
-        </RequireAuth>}>
-        </Route>
 
         <Route path='/' element={<Layout/>}>
-        <Route path='/' element={<Login/>}></Route>
-        <Route path='/register' element={<Register/>}></Route>
+          <Route index element={<Login/>}/>
+          <Route path='/register' element={<Register/>}/>
         </Route>
+        
+        <Route path='/' element={<LayoutRequireAuth/>}>
+          <Route path='/home' element={<Home/>}/>
+          <Route path='/profile' element={<Profile/>}/>
+        </Route>
+
+        <Route path='*' element={<NotFound/>}/>
       </Routes> 
       
     </>

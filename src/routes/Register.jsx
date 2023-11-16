@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { userContext } from "../context/userProvider";
 
 import { useForm } from "react-hook-form";
@@ -9,6 +9,7 @@ import FormErrors from "../components/FormErrors";
 import Title from "../components/TitleForm";
 import Button from "../components/Button";
 import Links from "../components/Links";
+import Loader from "../components/ButtonLoader";
 
 const Register = () => {
   const { Register } = useContext(userContext);
@@ -23,15 +24,22 @@ const Register = () => {
     setError,
   } = useForm();
 
+  const [loading, setLoading] = useState(false)
+
+
   const onSubmit = async (data) => {
     try {
+      setLoading(true)
       await Register(data.email, data.password);
+      <Loader/>
       navigate("/home");
     } catch (error) {
       console.log(error.code);
       setError("firebase", {
         message: ErrorsFirebase(error.code),
       });
+    } finally{
+      setLoading(false)
     }
   };
 
@@ -89,7 +97,9 @@ const Register = () => {
             })}
           />
           <FormErrors error={errors.repassword} />
-          <Button text="Registrarse" type="submit" />
+          {
+            loading ? <Loader/> :  <Button text="Ingresar" type="submit"/>
+          }
           <Links
             to="/"
             className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 w-96 flex justify-center"
