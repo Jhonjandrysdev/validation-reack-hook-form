@@ -6,6 +6,7 @@ import RequireAuth from './components/RequireAuth';
 import Register from './routes/Register';
 import { useContext } from 'react';
 import { userContext } from './context/userProvider';
+import Layout from './components/LayoutContainer';
 
 function App() {
 
@@ -25,9 +26,11 @@ function App() {
           <Home/>
         </RequireAuth>}>
         </Route>
+
+        <Route path='/' element={<Layout/>}>
         <Route path='/' element={<Login/>}></Route>
         <Route path='/register' element={<Register/>}></Route>
-    
+        </Route>
       </Routes> 
       
     </>
