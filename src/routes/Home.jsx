@@ -5,7 +5,7 @@ import { useFirestore } from "../hooks/useFirestore"
 
 const Home = () => {
 
-    const {data, error, loading} = useFirestore()
+    const {data, error, loading, addData} = useFirestore()
 
     const [link, setLink] = useState("")
 
@@ -17,10 +17,11 @@ const Home = () => {
         <p>{error}</p>
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         console.log(link);
         e.preventDefault()
-
+        await addData(link)
+        setLink("")
     }
     return(
         <>

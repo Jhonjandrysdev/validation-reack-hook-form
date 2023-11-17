@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import {db, auth} from '../firebase/FirebaseConfig';
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, getDocs, query, setDoc, where } from "firebase/firestore";
+import {nanoid} from 'nanoid';
 
 export const useFirestore = () => {
 
@@ -31,10 +32,20 @@ export const useFirestore = () => {
         }
     }
 
-    const addData = async() => {
+    const addData = async(url) => {
         try {
             setLoading(true)
+            const newDoc = {
+                enabled: true,
+                nanoID: nanoid(5),
+                origin: url,
+                uid: auth.currentUser.uid
+            }
+            const docRef = doc(db, "URLS", newDoc.nanoID)
+            await setDoc(docRef, newDoc )
+            setData([...data, newDoc ])
         } catch (error) {
+            console.log(error);
             setError(error.message)
         }finally{
             setLoading(false)
