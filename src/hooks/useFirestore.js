@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import {db} from '../firebase/FirebaseConfig';
+import {db, auth} from '../firebase/FirebaseConfig';
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 export const useFirestore = () => {
@@ -17,7 +17,7 @@ export const useFirestore = () => {
         try {
             setLoading(true)
             const dataRef = collection(db, "URLS")
-            const q = query(dataRef, where("uid", "==", "mMBL0dwOKEZYnGwtHBTlStwjZAo2" ))
+            const q = query(dataRef, where("uid", "==", auth.currentUser.uid ))
             const data = await getDocs(q)
             const dataDB = data.docs.map(doc => ({
                 id: doc.id, ...doc.data()
@@ -31,9 +31,19 @@ export const useFirestore = () => {
         }
     }
 
+    const addData = async() => {
+        try {
+            setLoading(true)
+        } catch (error) {
+            setError(error.message)
+        }finally{
+            setLoading(false)
+        }
+    }
     return {
         data,
         error,
-        loading
+        loading,
+        addData
     }
 }

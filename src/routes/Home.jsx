@@ -1,9 +1,13 @@
+import { useState } from "react"
+import Button from "../components/Button"
 import Title from "../components/TitleForm"
 import { useFirestore } from "../hooks/useFirestore"
 
 const Home = () => {
 
     const {data, error, loading} = useFirestore()
+
+    const [link, setLink] = useState("")
 
     if (loading) {
         return <Title text="Loading data..."/>
@@ -12,10 +16,27 @@ const Home = () => {
     if (error) {
         <p>{error}</p>
     }
+
+    const handleSubmit = (e) => {
+        console.log(link);
+        e.preventDefault()
+
+    }
     return(
         <>
-        <div>
+        <div className="flex flex-col items-center">
             <Title text="HOME"/>
+            
+            <form onSubmit={handleSubmit}>
+                <input type="text"
+                placeholder="Link de pagina web"
+                value={link}
+                onChange={(e) => setLink(e.target.value)}
+                className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-4/4 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                />
+                <Button type="submit" text="Add URL"/>
+            </form>
+            </div>
             {
                 data.map(item => (
                     <div key={item.nanoID}>
@@ -29,7 +50,7 @@ const Home = () => {
                     </div>
                 ))
             }
-        </div>
+        
         </>
     )
 }
