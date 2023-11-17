@@ -9,7 +9,7 @@ const Home = () => {
 
     const [link, setLink] = useState("")
 
-    if (loading) {
+    if (loading.getData) {
         return <Title text="Loading data..."/>
     }
 

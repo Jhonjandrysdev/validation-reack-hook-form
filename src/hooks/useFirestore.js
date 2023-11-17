@@ -7,7 +7,7 @@ export const useFirestore = () => {
 
     const [data, setData] = useState([])
     const [error, setError] = useState()
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState({})
 
     useEffect(() => {
         getData()
@@ -16,7 +16,7 @@ export const useFirestore = () => {
     const getData = async() => {
 
         try {
-            setLoading(true)
+            setLoading(prev => ({...prev, getData:true}))
             const dataRef = collection(db, "URLS")
             const q = query(dataRef, where("uid", "==", auth.currentUser.uid ))
             const data = await getDocs(q)
@@ -28,13 +28,13 @@ export const useFirestore = () => {
             console.log(error);
             setError(error.message)
         }finally{
-            setLoading(false)
+            setLoading(prev => ({...prev, getData:false}))
         }
     }
 
     const addData = async(url) => {
         try {
-            setLoading(true)
+            setLoading(prev => ({...prev, addData:true}))
             const newDoc = {
                 enabled: true,
                 nanoID: nanoid(5),
@@ -48,7 +48,7 @@ export const useFirestore = () => {
             console.log(error);
             setError(error.message)
         }finally{
-            setLoading(false)
+            setLoading(prev => ({...prev, addData:false}))
         }
     }
     return {
