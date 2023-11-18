@@ -4,9 +4,11 @@ import Title from "../components/TitleForm";
 import { useFirestore } from "../hooks/useFirestore";
 
 const Home = () => {
-  const { data, error, loading, addData, deleteData} = useFirestore();
+  const { data, error, loading, addData, deleteData, UpdateData } =
+    useFirestore();
 
   const [link, setLink] = useState("");
+  const [newOrigin, setNewOrigin] = useState("")
 
   if (loading.getData) {
     return <Title text="Loading data..." />;
@@ -19,12 +21,25 @@ const Home = () => {
   const handleSubmit = async (e) => {
     console.log(link);
     e.preventDefault();
+
+    if(newOrigin){
+        await UpdateData(newOrigin, link)
+        setNewOrigin("")
+        setLink("")
+        return
+    }
+
     await addData(link);
     setLink("");
   };
 
-  const deletDataIten = async(nanoID) =>  {
-    await deleteData(nanoID)
+  const deleteDataItem = async (nanoID) => {
+    await deleteData(nanoID);
+  };
+
+  const updateDataItem = (item) => {
+    setLink(item.origin)
+    setNewOrigin(item.nanoID)
   }
   return (
     <>
@@ -39,12 +54,19 @@ const Home = () => {
             onChange={(e) => setLink(e.target.value)}
             className=" bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 flex items-center"
           />
-          <Button
+          
+          {newOrigin ? <Button
             type="submit"
-            text="Add URL"
-            loading={loading.addData}
+            text="Edit URL"
+            loading={loading.updateDataItem}
             color="blue"
-          />
+          /> :  <Button
+          type="submit"
+          text="Add URL"
+          loading={loading.addData}
+          color="blue"
+        />}
+          
         </form>
       </div>
       {data.map((item) => (
@@ -55,7 +77,16 @@ const Home = () => {
           <p>{item.origin}</p>
           <Title text="UID" />
           <p>{item.uid}</p>
-          <Button text="Delete URL" type="button" onClick={() => deletDataIten(item.nanoID)} />
+          <Button
+            text="Delete URL"
+            type="button"
+            onClick={() => deleteDataItem(item.nanoID)}
+          />
+          <Button
+            text="Update URL"
+            type="button"
+            onClick={() => updateDataItem(item)}
+          />
         </div>
       ))}
     </>
