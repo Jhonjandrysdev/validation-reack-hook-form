@@ -4,7 +4,7 @@ import Title from "../components/TitleForm";
 import { useFirestore } from "../hooks/useFirestore";
 
 const Home = () => {
-  const { data, error, loading, addData } = useFirestore();
+  const { data, error, loading, addData, deleteData} = useFirestore();
 
   const [link, setLink] = useState("");
 
@@ -22,6 +22,10 @@ const Home = () => {
     await addData(link);
     setLink("");
   };
+
+  const deletDataIten = async(nanoID) =>  {
+    await deleteData(nanoID)
+  }
   return (
     <>
       <div className="flex flex-col items-center">
@@ -51,6 +55,7 @@ const Home = () => {
           <p>{item.origin}</p>
           <Title text="UID" />
           <p>{item.uid}</p>
+          <Button text="Delete URL" type="button" onClick={() => deletDataIten(item.nanoID)} />
         </div>
       ))}
     </>
