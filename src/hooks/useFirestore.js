@@ -54,16 +54,16 @@ export const useFirestore = () => {
 
     const deleteData =  async(nanoID) => {
         try {
-            setLoading(prev => ({...prev, addData:true}))
+            setLoading(prev => ({...prev, [nanoID]:true}))
             const docRef = doc(db, "URLS", nanoID)
             await deleteDoc(docRef)
-            setData(data.filter(e => e.nanoID !== nanoID))
+            setData(data.filter((e) => e.nanoID !== nanoID))
             
         } catch (error) {
             console.log(error);
             setError(error.message)
         } finally {
-            setLoading(prev => ({...prev, addData:false}))
+            setLoading(prev => ({...prev, [nanoID]:false}))
         }
     }
 
@@ -80,12 +80,24 @@ export const useFirestore = () => {
             setLoading(prev => ({...prev, UpdateData:false}))
         }
     }
+
+    const searchData = async(nanoID) => {
+        try {
+            const docRef = doc(db, "URLS", nanoID)
+            const docSnap = await getDocs(docRef)
+            return docSnap
+        } catch (error) {
+            console.log(error);
+            setError(error.message)
+    }
+}
     return {
         data,
         error,
         loading,
         addData,
         deleteData,
-        UpdateData
+        UpdateData,
+        searchData
     }
 }

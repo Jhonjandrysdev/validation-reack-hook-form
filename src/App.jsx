@@ -12,6 +12,7 @@ import Profile from './components/Profile';
 
 import Layout from './layouts/LayoutContainer';
 import LayoutRequireAuth from './layouts/LayoutRequireAuth';
+import LayoutRedirect from './layouts/LayoutRedirect';
 function App() {
 
   const {user} = useContext(userContext)
@@ -36,7 +37,9 @@ function App() {
           <Route path='/profile' element={<Profile/>}/>
         </Route>
 
-        <Route path='*' element={<NotFound/>}/>
+        <Route path='/:nanoID' element={<LayoutRedirect/>}>
+        <Route index element={<NotFound/>}/>
+        </Route>
       </Routes> 
       
     </>
